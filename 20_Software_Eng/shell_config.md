@@ -1,0 +1,128 @@
+Macbook ZSH Configuration
+
+```shell
+# 1. ZSH HISTORY & OPTIONS
+
+HISTFILE=~/.zsh_history
+SAVEHIST=1000000
+HISTSIZE=100000
+setopt APPEND_HISTORY          # Append history to the history file (no overwriting)
+setopt INC_APPEND_HISTORY      # Add commands as they are typed, don't wait for exit
+setopt SHARE_HISTORY           # Share history across terminals
+setopt HIST_IGNORE_ALL_DUPS    # Don't record dupes in history
+setopt HIST_SAVE_NO_DUPS       # Don't save dupes to history file
+
+# 2. ENVIRONMENT & PATH
+
+# --- Homebrew (Must be first to set core paths) ---
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# --- ODBC Settings ---
+export ODBCSYSINI=/opt/homebrew/etc
+export ODBCINI=/opt/homebrew/etc/odbc.ini
+
+# --- Path Construction ---
+# Prepend (Higher Priority)
+export PATH="$HOME/Desktop/00_Applications:$PATH"
+export PATH="$PATH:$HOME/.local/bin"      # pipx
+export PATH="$PATH:$HOME/.lmstudio/bin"   # LM Studio CLI
+
+# Append (Lower Priority)
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin/"
+
+# --- Python / Pyenv Setup ---
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+# export PYTHONPATH="$PYTHONPATH:$HOME/Desktop/01_desktop/code/"
+
+# 3. TOOL INITIALIZATION
+
+# --- Pyenv (Python Version Manager) ---
+eval "$(pyenv init - zsh)"
+
+# --- NVM (Node Version Manager) ---
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# --- Google Cloud SDK ---
+if [ -f "$HOME/Desktop/00_Applications/google-cloud-sdk/path.zsh.inc" ]; then
+  . "$HOME/Desktop/00_Applications/google-cloud-sdk/path.zsh.inc"
+fi
+if [ -f "$HOME/Desktop/00_Applications/google-cloud-sdk/completion.zsh.inc" ]; then
+  . "$HOME/Desktop/00_Applications/google-cloud-sdk/completion.zsh.inc"
+fi
+
+# --- SSH Keys ---
+# if ! ssh-add -l | grep -q "vinayd@corpuschristitx.gov"; then 
+#   ssh-add --apple-use-keychain /Users/VinayD/Desktop/01_CCFD/Gitlab/z_ssh/vinayd_gitlab
+# fi
+# if ! ssh-add -l | grep -q "vdanepalli@gmail.com"; then 
+#   ssh-add --apple-use-keychain /Users/VinayD/Desktop/02_Vinay/Github/zsh/id_ed25519_vdanepalli
+# fi
+
+# 4. ALIASES
+
+# --- Modern Replacements ---
+alias ls='ls -G'       # Enable colors
+# alias cat='bat'      # Use bat instead of cat
+alias find='fd'        # Use fd instead of find
+alias grep='rg'        # Use ripgrep instead of grep
+
+# --- Navigation & General ---
+alias ll='ls -lGh'     # List in long format
+alias la='ls -lGha'    # List all, including hidden
+alias ..='cd ..'
+alias ...='cd ../..'
+alias c='clear'
+alias p='python'
+alias ip='ipython'
+
+# --- Git ---
+alias g='git'
+alias ga='git add'
+alias gaa='git add .'
+alias gap='git add -p'
+alias gs='git status -s'
+alias gst='git status'
+alias gc='git commit -m'
+alias gca='git commit -a -m'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias gb='git branch'
+alias gl='git log --oneline --graph --decorate'
+alias gp='git push'
+alias gpf='git push --force'
+alias gpl='git pull'
+alias gd='git diff'
+alias gds='git diff --staged'
+
+
+# 5. PLUGINS & UTILITIES
+
+# --- FZF (Fuzzy Finder) ---
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# --- Zoxide (Smarter 'cd') ---
+eval "$(zoxide init zsh)"
+
+# --- Direnv (Auto-environment loader) ---
+# eval "$(direnv hook zsh)"
+
+# --- Zsh Autosuggestions (Homebrew) ---
+if [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+    source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+# --- Zsh Syntax Highlighting (Homebrew) ---
+# NOTE: Must be loaded *after* autosuggestions
+if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# 6. PROMPT (MUST BE LAST)
+
+# --- Starship Prompt ---
+eval "$(starship init zsh)"
+```
+
